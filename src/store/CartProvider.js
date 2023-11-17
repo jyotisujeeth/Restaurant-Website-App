@@ -1,82 +1,49 @@
-import { useReducer } from "react";
-
-import CartContext from "./cart-context";
-
-const defaultCartState = {
-  items: [],
-  totalAmount: 0,
-};
-
-const cartReducer = (state, action) => {
-  if (action.type === "ADD") {
-    const updatedTotalAmount =
-      state.totalAmount + action.item.price * action.item.amount;
-
-    const existingCartItemIndex = state.items.findIndex(
-      (item) => item.id === action.item.id
-    );
-    const existingCartItem = state.items[existingCartItemIndex];
-    let updatedItems;
-
-    if (existingCartItem) {
-      const updatedItem = {
-        ...existingCartItem,
-        amount: existingCartItem.amount + action.item.amount,
-      };
-      updatedItems = [...state.items];
-      updatedItems[existingCartItemIndex] = updatedItem;
-    } else {
-      updatedItems = state.items.concat(action.item);
-    }
-
-    return {
-      items: updatedItems,
-      totalAmount: updatedTotalAmount,
-    };
-  }
-  if (action.type === "REMOVE") {
-    const existingCartItemIndex = state.items.findIndex(
-      (item) => item.id === action.id
-    );
-    const existingItem = state.items[existingCartItemIndex];
-    const updatedTotalAmount = state.totalAmount - existingItem.price;
-    let updatedItems;
-    if (existingItem.amount === 1) {
-      updatedItems = state.items.filter((item) => item.id !== action.id);
-    } else {
-      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
-      updatedItems = [...state.items];
-      updatedItems[existingCartItemIndex] = updatedItem;
-    }
-
-    return {
-      items: updatedItems,
-      totalAmount: updatedTotalAmount,
-    };
-  }
-
-  return defaultCartState;
-};
+import CartContext from "./clear: art-context";
+import React, { useState } from "react";
 
 const CartProvider = (props) => {
-  const [cartState, dispatchCartAction] = useReducer(
-    cartReducer,
-    defaultCartState
-  );
+  const [items, setItems] = useState([
+    {
+      name: "Sushi",
+      details: "Finest fishes and veggies",
+      price: 60,
+      quantity: 0,
+    },
+    { name: "Dosa", details: "Breakfast", price: 50, quantity: 0 },
+    { name: "Idli", details: "two piece per plate", price: 20, quantity: 0 },
+    { name: "Roti", details: "South Indian", price: 30, quantity: 0 },
+  ]);
 
-  const addItemToCartHandler = (item) => {
-    dispatchCartAction({ type: "ADD", item: item });
+  const updateQuantity = (item) => {
+    // items.forEach(each=>
+    //   { each.name===item.name ? setItems([...items,{...each,quantity:each.quantity++} ]): setItems([...items])}
+    // )
+    const updatedItems = items.map((each) => {
+      return item.name === each.name
+        ? { ...item, quantity: each.quantity + 1 }
+        : { ...each };
+    });
+    console.log(updatedItems);
+    setItems(updatedItems);
   };
+  console.log(items);
 
-  const removeItemFromCartHandler = (id) => {
-    dispatchCartAction({ type: "REMOVE", id: id });
+  const removeItemHandler = (item) => {
+    const updatedItems = items.map((each) => {
+      return item.name === each.name
+        ? { ...item, quantity: --each.quantity }
+        : { ...each };
+    });
+    console.log(updatedItems);
+    setItems(updatedItems);
   };
 
   const cartContext = {
-    items: cartState.items,
-    totalAmount: cartState.totalAmount,
-    addItem: addItemToCartHandler,
-    removeItem: removeItemFromCartHandler,
+    items: items,
+    totalAmount: 0,
+    // addItem:addItemToCartHandler,
+    removeItem: removeItemHandler,
+    updateItem: updateQuantity,
   };
 
   return (

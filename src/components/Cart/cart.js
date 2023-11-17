@@ -1,51 +1,44 @@
-import { useContext } from 'react';
-
-import Modal from '../UI/Modal';
-import CartItem from './CartItem';
-import classes from './Cart.module.css';
-import CartContext from '../../store/cart-context';
+import React, { useState, useContext } from "react";
+import Modal from "../UI/Modal/Modal";
+import classes from "./Cart.module.css";
+import CartContext from "../../Store/Cart-Context";
+import CartItem from "./CartItem";
 
 const Cart = (props) => {
-  const cartCtx = useContext(CartContext);
+  const ct = useContext(CartContext);
+  const [cancel, setCancel] = useState(false);
+  // const cartItems=[];
+  let Amount = ct.items.reduce((curNumber, item) => {
+    return curNumber + item.price * item.quantity;
+  }, 0);
 
-  const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
-  const hasItems = cartCtx.items.length > 0;
-
-  const cartItemRemoveHandler = (id) => {
-    cartCtx.removeItem(id);
-  };
-
-  const cartItemAddHandler = (item) => {
-    cartCtx.addItem({ ...item, amount: 1 });
-  };
-
-  const cartItems = (
-    <ul className={classes['cart-items']}>
-      {cartCtx.items.map((item) => (
-        <CartItem
-          key={item.id}
-          name={item.name}
-          amount={item.amount}
-          price={item.price}
-          onRemove={cartItemRemoveHandler.bind(null, item.id)}
-          onAdd={cartItemAddHandler.bind(null, item)}
-        />
-      ))}
-    </ul>
+  const items = ct.items.map(
+    (item) =>
+      item.quantity > 0 && (
+        <CartItem list={item} key={Math.random().toString()} />
+      )
   );
 
+  const cancelButtonHandler = () => {
+    setCancel(true);
+    props.oncancel(cancel);
+  };
+
   return (
-    <Modal onClose={props.onClose}>
-      {cartItems}
+    <Modal>
+      <ul>{items}</ul>
       <div className={classes.total}>
         <span>Total Amount</span>
-        <span>{totalAmount}</span>
+        <span className={classes.price}>Rs.{Amount}</span>
       </div>
       <div className={classes.actions}>
-        <button className={classes['button--alt']} onClick={props.onClose}>
+        <button
+          className={classes["button--alt"]}
+          onClick={cancelButtonHandler}
+        >
           Close
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
+        <button className={classes.button}>Order</button>
       </div>
     </Modal>
   );
