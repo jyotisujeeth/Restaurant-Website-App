@@ -1,3 +1,4 @@
+
 import React, { useContext } from "react";
 import classes from "./CartItem.module.css";
 import CartContext from "../../Store/Cart-Context";
@@ -21,13 +22,10 @@ const CartItem = (props) => {
       <span className={classes.price}>Rs.{props.list.price}</span>
       <div className={classes.actions}>
         <button className={classes.button} onClick={removeItemHandler}>
-          {" "}
-          -{" "}
+          
+          -
         </button>
-        <button className={classes.button} onClick={addItem}>
-          {" "}
-          +{" "}
-        </button>
+        <button className={classes.button} onClick={addItem}>  +</button>
       </div>
     </li>
   );

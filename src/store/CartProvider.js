@@ -1,4 +1,4 @@
-import CartContext from "./clear: art-context";
+import CartContext from "./Cart-Context";
 import React, { useState } from "react";
 
 const CartProvider = (props) => {
