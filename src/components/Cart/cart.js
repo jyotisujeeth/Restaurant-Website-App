@@ -14,7 +14,7 @@ const Cart = (props) => {
 
   const items = ct.items.map(
     (item) =>
-      item.quantity > 0 && (
+      item.quantity > 0  && (
         <CartItem list={item} key={Math.random().toString()} />
       )
   );
